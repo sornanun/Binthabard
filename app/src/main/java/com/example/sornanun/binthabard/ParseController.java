@@ -14,9 +14,11 @@ import com.parse.SaveCallback;
 public class ParseController {
 
     static String objectId;
-    ParseObject monk_location = new ParseObject("Monk_Location");
+    ParseObject monk_location;
 
     public void saveLocation(String _lat, String _long, String _address) {
+
+        monk_location = new ParseObject("Monk_Location");
         monk_location.put("lat", _lat);
         monk_location.put("long", _long);
         monk_location.put("address", _address);
@@ -55,8 +57,13 @@ public class ParseController {
     }
 
     public void removeLocation() {
-        monk_location.deleteInBackground();
-        objectId = "";
-        Log.d("ParseController","Remove Location Finished");
+        if(monk_location != null) {
+            monk_location.deleteInBackground();
+            objectId = "";
+            Log.d("ParseController", "Remove Location Finished");
+        }
+        else{
+            Log.e("ParseController","monk_location is null");
+        }
     }
 }

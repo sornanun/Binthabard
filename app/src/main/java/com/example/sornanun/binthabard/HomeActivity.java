@@ -150,7 +150,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         GPSenabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
-
     public void isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         NetworkEnabled = connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
