@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -30,6 +31,12 @@ import com.google.android.gms.location.LocationServices;
 import com.parse.ParseUser;
 import com.skyfishjy.library.RippleBackground;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -118,6 +125,9 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         });
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 
     public void isGPSEnable() {
@@ -150,6 +160,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         GPSenabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
+
     public void isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         NetworkEnabled = connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
@@ -174,6 +185,28 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    private String getAddress(double lat, double longitude) {
+        HttpURLConnection conn = null;
+        StringBuilder jsonResults = new StringBuilder();
+        try {
+            StringBuilder sb = new StringBuilder(
+                    "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + longitude + "&sensor=true&language=th");
+            URL url = new URL(sb.toString());
+            conn = (HttpURLConnection) url.openConnection();
+            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+
+            // Load the results into a StringBuilder
+            int read;
+            char[] buff = new char[1024];
+            while ((read = in.read(buff)) != -1) {
+                jsonResults.append(buff, 0, read);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResults.toString();
     }
 
     @Override
@@ -231,12 +264,27 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
     private void setLocation() {
         latitude = String.valueOf(mCurrentLocation.getLatitude());
         longitude = String.valueOf(mCurrentLocation.getLongitude());
-        address = "...";
+        try
+        {
+            JSONObject jsonObject = new JSONObject(getAddress(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude()));
+            if (jsonObject.getString("status").equals("OK"))
+            {
+                JSONArray addressArray = jsonObject.getJSONArray("results");
+                JSONObject address = addressArray.getJSONObject(0);
+                String addressComponents = address.getString("formatted_address");
+                this.address = addressComponents;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private void updateUI() {
         myLat.setText("ละติจูด " + String.valueOf(mCurrentLocation.getLatitude()));
         myLong.setText("ลองจิจูด " + String.valueOf(mCurrentLocation.getLongitude()));
+        myAddress.setText("สถานที่ " + address);
         myTime.setText("อัพเดทเมื่อ " + mLastUpdateTime);
 
         saveOrUpdateLocationToParse();
