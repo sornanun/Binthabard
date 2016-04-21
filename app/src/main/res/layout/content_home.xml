@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorPrimary"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -75,7 +76,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="5dp"
                 android:text="@string/txtlat"
-                android:textSize="16dp" />
+                android:textSize="16dp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/txtlongitude"
@@ -85,7 +87,8 @@
                 android:layout_below="@+id/txtlatitude"
                 android:layout_marginTop="5dp"
                 android:text="@string/txtlong"
-                android:textSize="16dp" />
+                android:textSize="16dp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/txtaddress"
@@ -118,5 +121,16 @@
             android:text="@string/LogoutBtn" />
 
     </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        android:src="@mipmap/ic_check" />
 
 </RelativeLayout>
