@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">บิณฑบาต</string>
+    <string name="action_settings">ตั้งค่า</string>
+    <string name="title_activity_login_signup">เข้าสู่ระบบ/สมัครสมาชิก</string>
+    <string name="title_activity_home">บิณฑบาต</string>
+    <string name="hello">Hello World, ParseStarterProjectActivity!</string>
+    <string name="Username">หมายเลขสุทธิ(บัตรประจำตัวพระสงฆ์)</string>
+    <string name="Password">รหัสผ่าน</string>
+    <string name="LoginBtn">เข้าสู่ระบบ</string>
+    <string name="SignupBtn">สมัครสมาชิก</string>
+    <string name="LogoutBtn">ออกจากระบบ</string>
+    <string name="Welcome">ยินดีต้อนรับ</string>
+    <string name="ClickToShare">แตะที่รูปภาพเพื่อเปิดหรือปิดตำแหน่ง</string>
+    <string name="txtlat">ละติจูด</string>
+    <string name="txtlong">ลองจิจูด</string>
+    <string name="txtaddress">สถานที่</string>
+    <string name="txttime">อัพเดทเมื่อ</string>
+    <string name="cantGetLocation">ไม่พบ</string>
+    <string name="address_found">พบสถานที่</string>
+    <string name="no_address_found">ไม่พบสถานที่</string>
+    <string name="service_not_available">service ไม่สามารถทำงานได้</string>
+    <string name="invalid_lat_long_used">ไม่สามารถใช้ลติจูดและลองจิจูดได้</string>
+
+</resources>
