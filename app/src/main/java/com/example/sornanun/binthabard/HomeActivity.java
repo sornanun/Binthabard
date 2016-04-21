@@ -132,7 +132,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
                     .setPositiveButton("ตกลง",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface d, int id) {
-                                    Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                                     startActivity(intent);
                                     d.dismiss();
                                 }
@@ -158,7 +158,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
         if (!NetworkEnabled) {
             new AlertDialog.Builder(this)
                     .setTitle("ไม่มีการเชื่อมต่ออินเทอร์เน็ต")
-                    .setMessage("อินเทอร์เน็ตไม่ได้เปิดอยู่ กรุณาเชื่อมต่ออินเทอร์เน็ตผ่าน Wifi,3G,4G ก่อนทำรายการอีกครั้ง")
+                    .setMessage("อินเทอร์เน็ตไม่ได้เปิดอยู่ กรุณาเชื่อมต่ออินเทอร์เน็ตผ่าน Wifi หรือ 3G หรือ 4G ก่อนทำรายการอีกครั้ง")
                     .setCancelable(false)
                     .setPositiveButton("เข้าใจ", new DialogInterface.OnClickListener() {
                         @Override
