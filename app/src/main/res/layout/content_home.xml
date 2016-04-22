@@ -31,10 +31,8 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/content"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-
-            android:layout_below="@+id/txtuser"
-            android:layout_marginTop="20dp"
+            android:layout_height="270dp"
+            android:layout_below="@+id/gpsConnectionBox"
             app:rb_color="#ffca3a"
             app:rb_duration="3000"
             app:rb_radius="32dp"
@@ -48,25 +46,26 @@
                 android:layout_centerInParent="true"
                 android:src="@drawable/open_off" />
 
+            <TextView
+                android:id="@+id/pressImageDescriptionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/centerImage"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="5dp"
+                android:text="แตะที่รูปภาพเพื่อเปิดตำแหน่งของคุณ"
+                android:textColor="#f2f2f2" />
+
         </com.skyfishjy.library.RippleBackground>
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/logout"
-            android:layout_centerHorizontal="true"
-            android:text="@string/ClickToShare"
-            android:textSize="14dp" />
-
 
         <RelativeLayout
             android:id="@+id/positionDetail"
             android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/textView"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/content">
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/content"
+            android:background="@drawable/button_radius"
+            android:padding="10dp"
+            android:visibility="invisible">
 
             <TextView
                 android:id="@+id/txtlatitude"
@@ -97,7 +96,6 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/txtlongitude"
                 android:layout_marginTop="5dp"
-                android:text="@string/txtaddress"
                 android:textSize="16dp" />
 
             <TextView
@@ -107,30 +105,85 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/txtaddress"
                 android:layout_marginTop="5dp"
-                android:text="@string/txttime"
                 android:textSize="16dp" />
 
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/logout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:text="@string/LogoutBtn" />
+        <RelativeLayout
+            android:id="@+id/internetConnectionBox"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/button_radius"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="@string/internet_connection"
+                android:textColor="@color/common_plus_signin_btn_text_dark_disabled"
+                android:textSize="18dp" />
+
+            <ImageButton
+                android:id="@+id/imgInternetStatus"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/transparent"
+                android:scaleType="fitXY"
+                android:src="@mipmap/ic_check" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/gpsConnectionBox"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/internetConnectionBox"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/button_radius"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="@string/location_status"
+                android:textColor="@color/common_plus_signin_btn_text_dark_disabled"
+                android:textSize="18dp" />
+
+            <ImageButton
+                android:id="@+id/imgGPSStatus"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/transparent"
+                android:scaleType="fitXY"
+                android:src="@mipmap/ic_check" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:background="@android:color/transparent"
-        android:scaleType="fitXY"
-        android:src="@mipmap/ic_check" />
+        android:src="@mipmap/ic_logout" />
 
 </RelativeLayout>

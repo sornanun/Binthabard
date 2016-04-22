@@ -7,11 +7,13 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -42,19 +44,25 @@ import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    Button logout;
     RippleBackground rippleBackground;
     RelativeLayout positionDetail;
     TextView myLat;
     TextView myLong;
     TextView myAddress;
     TextView myTime;
+    FloatingActionButton fab;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Location mCurrentLocation;
     String mLastUpdateTime;
     LocationRequest mLocationRequest;
     boolean switchLocation = false;
+
+    ImageView internetStatusImage;
+    ImageView gpsStatusImage;
+    TextView pressImageDesText;
+    RelativeLayout internetConnectionBox;
+    RelativeLayout gpsConnectionBox;
 
     ParseUser currentUser;
     ParseController parseController;
@@ -80,14 +88,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
         String struser = currentUser.getUsername().toString();
         TextView txtuser = (TextView) findViewById(R.id.txtuser);
         txtuser.setText("ยินดีต้อนรับ " + struser);
-        logout = (Button) findViewById(R.id.logout);
-        logout.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View arg0) {
-                ParseUser.logOut();
-                finish();
-            }
-        });
 
         // Create an instance of GoogleAPIClient.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -101,6 +101,31 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
         myAddress = (TextView) findViewById(R.id.txtaddress);
         myTime = (TextView) findViewById(R.id.txttime);
         positionDetail = (RelativeLayout) findViewById(R.id.positionDetail);
+        internetStatusImage = (ImageView) findViewById(R.id.imgInternetStatus);
+        gpsStatusImage = (ImageView) findViewById(R.id.imgGPSStatus);
+        pressImageDesText = (TextView) findViewById(R.id.pressImageDescriptionText);
+        internetConnectionBox = (RelativeLayout) findViewById(R.id.internetConnectionBox);
+        internetConnectionBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isNetworkAvailable(getBaseContext());
+            }
+        });
+        gpsConnectionBox = (RelativeLayout) findViewById(R.id.gpsConnectionBox);
+        gpsConnectionBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isGPSEnable();
+            }
+        });
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showExitDialog();
+            }
+        });
 
         rippleBackground = (RippleBackground) findViewById(R.id.content);
         ImageView imageView = (ImageView) findViewById(R.id.centerImage);
@@ -112,22 +137,81 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
                     if (NetworkEnabled) {
                         isGPSEnable();
                         if (GPSenabled && NetworkEnabled) {
-                            startLocationUpdates();
-                            rippleBackground.startRippleAnimation();
-                            switchLocation = true;
+                            on();
                         }
                     }
                 } else {
-                    stopLocationUpdates();
-                    rippleBackground.stopRippleAnimation();
-                    switchLocation = false;
-                    removeLocationFromParse();
+                    off();
                 }
             }
         });
-
+        setStatusImage();
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+    }
+
+    private void on() {
+        positionDetail.setVisibility(View.VISIBLE);
+        pressImageDesText.setVisibility(View.INVISIBLE);
+        startLocationUpdates();
+        rippleBackground.startRippleAnimation();
+        switchLocation = true;
+    }
+
+    private void off() {
+        positionDetail.setVisibility(View.INVISIBLE);
+        pressImageDesText.setVisibility(View.VISIBLE);
+        stopLocationUpdates();
+        rippleBackground.stopRippleAnimation();
+        switchLocation = false;
+        removeLocationFromParse();
+    }
+
+    private void setStatusImage() {
+        if (verifiedInternetConnection() == true) {
+            internetStatusImage.setImageResource(R.mipmap.ic_check);
+        } else {
+            internetStatusImage.setImageResource(R.mipmap.ic_uncheck);
+        }
+        if (verifiedGPSConnection() == true) {
+            gpsStatusImage.setImageResource(R.mipmap.ic_check);
+        } else {
+            gpsStatusImage.setImageResource(R.mipmap.ic_uncheck);
+        }
+    }
+
+    private boolean verifiedInternetConnection() {
+        ConnectivityManager cm = (ConnectivityManager) getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
+
+    private boolean verifiedGPSConnection() {
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean statusOfGPS = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        return statusOfGPS;
+    }
+
+    public void showExitDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final String message = "คุณต้องการออกจากระบบและปิดแอพพลิเคชั่นใช่หรือไม่ ?";
+        builder.setMessage(message)
+                .setPositiveButton("ตกลง",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int id) {
+                                off();
+                                ParseUser.logOut();
+                                finish();
+                            }
+                        })
+                .setNegativeButton("ยกเลิก",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int id) {
+                                d.cancel();
+                            }
+                        });
+        builder.create().show();
     }
 
     public void isGPSEnable() {
@@ -137,8 +221,8 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
         if (!GPSenabled) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             final String message = "GPS ไม่ได้เปิดอยู่ กรุณากดตกลง แล้วทำการเปิด GPS";
-
             builder.setMessage(message)
+                    .setTitle("กรุณาเปิด GPS")
                     .setPositiveButton("ตกลง",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface d, int id) {
@@ -166,16 +250,26 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
         NetworkEnabled = connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
 
         if (!NetworkEnabled) {
-            new AlertDialog.Builder(this)
-                    .setTitle("ไม่มีการเชื่อมต่ออินเทอร์เน็ต")
-                    .setMessage("อินเทอร์เน็ตไม่ได้เปิดอยู่ กรุณาเชื่อมต่ออินเทอร์เน็ตผ่าน Wifi หรือ 3G หรือ 4G ก่อนทำรายการอีกครั้ง")
-                    .setCancelable(false)
-                    .setPositiveButton("เข้าใจ", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    }).create().show();
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final String message = "อินเทอร์เน็ตไม่ได้เปิดอยู่ กรุณาเชื่อมต่ออินเทอร์เน็ตผ่าน Wifi หรือ 3G หรือ 4G ก่อนดำเนินการอีกครั้ง";
+            builder.setMessage(message)
+                    .setTitle("กรุณาเชื่อมต่ออินเทอร์เน็ต")
+                    .setPositiveButton("ตกลง",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface d, int id) {
+                                    startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+                                }
+                            })
+                    .setNegativeButton("ยกเลิก",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface d, int id) {
+                                    d.cancel();
+                                    Toast.makeText(getApplicationContext(),
+                                            "คุณยังไม่ได้เปิดการเชื่อมต่ออินเทอร์เน็ต",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+            builder.create().show();
         }
         NetworkEnabled = connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
@@ -264,19 +358,15 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
     private void setLocation() {
         latitude = String.valueOf(mCurrentLocation.getLatitude());
         longitude = String.valueOf(mCurrentLocation.getLongitude());
-        try
-        {
-            JSONObject jsonObject = new JSONObject(getAddress(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude()));
-            if (jsonObject.getString("status").equals("OK"))
-            {
+        try {
+            JSONObject jsonObject = new JSONObject(getAddress(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
+            if (jsonObject.getString("status").equals("OK")) {
                 JSONArray addressArray = jsonObject.getJSONArray("results");
                 JSONObject address = addressArray.getJSONObject(0);
                 String addressComponents = address.getString("formatted_address");
                 this.address = addressComponents;
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -325,8 +415,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onResume() {
         super.onResume();
-//        if (mGoogleApiClient.isConnected() && !switchLocation) {
-//            startLocationUpdates();
-//        }
+        setStatusImage();
     }
 }

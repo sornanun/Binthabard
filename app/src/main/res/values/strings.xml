@@ -18,6 +18,8 @@
     <string name="cantGetLocation">ไม่พบ</string>
     <string name="address_found">พบสถานที่</string>
     <string name="no_address_found">ไม่พบสถานที่</string>
+    <string name="internet_connection">การเชื่อมต่ออินเทอร์เน็ต</string>
+    <string name="location_status">การเชื่อมต่อกับ GPS</string>
     <string name="service_not_available">service ไม่สามารถทำงานได้</string>
     <string name="invalid_lat_long_used">ไม่สามารถใช้ลติจูดและลองจิจูดได้</string>
 

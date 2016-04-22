@@ -21,6 +21,7 @@ public class ParseController {
         monk_location = new ParseObject("Monk_Location");
         monk_location.put("lat", _lat);
         monk_location.put("long", _long);
+        if(_address == null) _address = "ไม่พบสถานที่";
         monk_location.put("address", _address);
 
         monk_location.saveInBackground(new SaveCallback() {
